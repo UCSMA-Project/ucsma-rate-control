@@ -876,6 +876,106 @@ static u32 ath_tx_default_wait(u32 buf_size) {
 
 static int counter = 1;
 
+static void ath9k_tx_dup(struct ieee80211_hw *hw,
+		     struct ieee80211_tx_control *control,
+		     struct sk_buff *skb) {
+ 	struct ath_softc *sc;
+ 	struct ath_common *common;
+ 	struct ath_tx_control txctl;
+ 	struct ieee80211_hdr *hdr;
+ 	unsigned long flags;
+ 	u32 wait_ms;
+	int i;
+
+	//wait_ms = ath_tx_default_wait(ath_tx_get_buf_size(hw->priv));
+
+	if (counter % 1000 == 0) {
+	  pr_info("Sending packet with delay x: %d us\n", ath_tx_get_buf_size(hw->priv));
+	  counter = 1;
+	} else {
+	  counter++;
+	}
+	
+	//udelay(wait_ms);
+
+	sc = hw->priv;
+
+	// Update all txq buffers
+	// for (i = 0; i < IEEE80211_NUM_ACS; i++) {
+	  // ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum);
+	// }
+
+	common = ath9k_hw_common(sc->sc_ah);
+	hdr = (struct ieee80211_hdr *) skb->data;
+
+	if (sc->ps_enabled) {
+		/*
+		 * mac80211 does not set PM field for normal data frames, so we
+		 * need to update that based on the current PS mode.
+		 */
+		if (ieee80211_is_data(hdr->frame_control) &&
+				!ieee80211_is_nullfunc(hdr->frame_control) &&
+				!ieee80211_has_pm(hdr->frame_control)) {
+			ath_dbg(common, PS,
+				"Add PM=1 for a TX frame while in PS mode\n");
+			hdr->frame_control |= cpu_to_le16(IEEE80211_FCTL_PM);
+		}
+	}
+
+	if (unlikely(sc->sc_ah->power_mode == ATH9K_PM_NETWORK_SLEEP)) {
+		/*
+		 * We are using PS-Poll and mac80211 can request TX while in
+		 * power save mode. Need to wake up hardware for the TX to be
+		 * completed and if needed, also for RX of buffered frames.
+		 */
+		ath9k_ps_wakeup(sc);
+		spin_lock_irqsave(&sc->sc_pm_lock, flags);
+		if (!(sc->sc_ah->caps.hw_caps & ATH9K_HW_CAP_AUTOSLEEP))
+			ath9k_hw_setrxabort(sc->sc_ah, 0);
+		if (ieee80211_is_pspoll(hdr->frame_control)) {
+			ath_dbg(common, PS,
+				"Sending PS-Poll to pick a buffered frame\n");
+			sc->ps_flags |= PS_WAIT_FOR_PSPOLL_DATA;
+		} else {
+			ath_dbg(common, PS, "Wake up to complete TX\n");
+			sc->ps_flags |= PS_WAIT_FOR_TX_ACK;
+		}
+		/*
+		 * The actual restore operation will happen only after
+		 * the ps_flags bit is cleared. We are just dropping
+		 * the ps_usecount here.
+		 */
+		spin_unlock_irqrestore(&sc->sc_pm_lock, flags);
+		ath9k_ps_restore(sc);
+	}
+
+	/*
+	 * Cannot tx while the hardware is in full sleep, it first needs a full
+	 * chip reset to recover from that
+	 */
+	if (unlikely(sc->sc_ah->power_mode == ATH9K_PM_FULL_SLEEP)) {
+		ath_err(common, "TX while HW is in FULL_SLEEP mode\n");
+		goto exit;
+	}
+
+	memset(&txctl, 0, sizeof(struct ath_tx_control));
+	txctl.txq = sc->tx.txq_map[skb_get_queue_mapping(skb)];
+	txctl.sta = control->sta;
+
+	ath_dbg(common, XMIT, "transmitting packet, skb: %p\n", skb);
+
+	if (ath_tx_start(hw, skb, &txctl) != 0) {
+		ath_dbg(common, XMIT, "TX failed\n");
+		TX_STAT_INC(txctl.txq->axq_qnum, txfailed);
+		goto exit;
+	}
+
+	return;
+exit:
+	ieee80211_free_txskb(hw, skb);
+}
+
+
 static void ath9k_tx(struct ieee80211_hw *hw,
 		     struct ieee80211_tx_control *control,
 		     struct sk_buff *skb) {
@@ -888,6 +988,8 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	int i;
 
 	//wait_ms = ath_tx_default_wait(ath_tx_get_buf_size(hw->priv));
+
+	ath9k_tx_dup(hw, control, skb);
 
 	if (counter % 1000 == 0) {
 	  pr_info("Sending packet with delay x: %d us\n", ath_tx_get_buf_size(hw->priv));
