@@ -965,7 +965,6 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	ath_dbg(common, XMIT, "transmitting packet, skb: %p\n", skb);
 
 	if (ath_tx_start(hw, skb, &txctl) != 0) {
-		pr_info("TX failed\n");
 		ath_dbg(common, XMIT, "TX failed\n");
 		TX_STAT_INC(txctl.txq->axq_qnum, txfailed);
 		goto exit;
@@ -973,6 +972,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 
 	return;
 exit:
+	pr_info("TX failed\n");
 	ieee80211_free_txskb(hw, skb);
 }
 
