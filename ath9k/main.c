@@ -836,28 +836,27 @@ int ath_cw_update(struct ath_softc *sc, int qnum)
 
 	buf_size = ath_tx_get_buf_size(sc);
 
-	for (i = 9; i >= 0; i--) {
-	  if (buf_size > i * 64) {
-	    qi.tqi_cwmin = cw_arr[i];
-	    qi.tqi_cwmax = cw_arr[i];
-	    break;
-	  }
-	}
+	// for (i = 9; i >= 0; i--) {
+	//   if (buf_size > i * 64) {
+	//     qi.tqi_cwmin = cw_arr[i];
+	//     qi.tqi_cwmax = cw_arr[i];
+	//     break;
+	//   }
+	// }
 
-	/*
-	if (buf_size > 3 * (ATH_TXBUF / 4)) {
+	if (buf_size > 48) {
 		qi.tqi_cwmin = 15;
 		qi.tqi_cwmax = 15;
-	} else if (buf_size > 2 * (ATH_TXBUF / 4)) {
+	} else if (buf_size > 32) {
 		qi.tqi_cwmin = 7;
 		qi.tqi_cwmax = 7;
-	} else if (buf_size > (ATH_TXBUF / 4)) {
+	} else if (buf_size > 16) {
 		qi.tqi_cwmin = 3;
 		qi.tqi_cwmax = 3;
 	} else {
 		qi.tqi_cwmin = 1;
 		qi.tqi_cwmax = 1;
-		} */
+		}
 
 	if (!ath9k_hw_set_txq_props(ah, qnum, &qi)) {
 		ath_err(ath9k_hw_common(sc->sc_ah),
@@ -890,7 +889,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	wait_ms = ath_tx_default_wait(ath_tx_get_buf_size(hw->priv));
 
 	if (counter % 1000 == 0) {
-	  pr_info("Sending packet with delay x: %d us\n", ath_tx_get_buf_size(hw->priv));
+	  pr_info("Number of free buffers: %d\n", ath_tx_get_buf_size(hw->priv));
 	  counter = 1;
 	} else {
 	  counter++;
