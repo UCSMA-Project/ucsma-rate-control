@@ -886,7 +886,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
  	u32 wait_ms;
 	int i;
 
-	// wait_ms = ath_tx_default_wait(ath_tx_get_buf_size(hw->priv));
+	wait_ms = ath_tx_default_wait(ath_tx_get_buf_size(hw->priv));
 
 	if (counter % 1000 == 0) {
 	  pr_info("Number of free buffers: %d\n", ath_tx_get_buf_size(hw->priv));
@@ -895,7 +895,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	  counter++;
 	}
 	
-	// udelay(wait_ms);
+	udelay(wait_ms);
 
 	sc = hw->priv;
 
