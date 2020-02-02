@@ -870,7 +870,7 @@ int ath_cw_update(struct ath_softc *sc, int qnum)
 }
 
 static u32 ath_tx_default_wait(u32 buf_size) {
-  return 10 * (ATH_TXBUF - buf_size);
+  return 10 * (64 - buf_size);
 }
 
 static int counter = 1;
