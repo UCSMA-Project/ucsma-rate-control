@@ -887,7 +887,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
  	u32 wait_ms;
 	int i;
 
-	//wait_ms = ath_tx_default_wait(ath_tx_get_buf_size(hw->priv));
+	wait_ms = ath_tx_default_wait(ath_tx_get_buf_size(hw->priv));
 
 	if (counter % 1000 == 0) {
 	  pr_info("Sending packet with delay x: %d us\n", ath_tx_get_buf_size(hw->priv));
@@ -896,14 +896,14 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	  counter++;
 	}
 	
-	//udelay(wait_ms);
+	udelay(wait_ms);
 
 	sc = hw->priv;
 
 	// Update all txq buffers
-	// for (i = 0; i < IEEE80211_NUM_ACS; i++) {
-	  // ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum);
-	// }
+	for (i = 0; i < IEEE80211_NUM_ACS; i++) {
+	  ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum);
+	}
 
 	common = ath9k_hw_common(sc->sc_ah);
 	hdr = (struct ieee80211_hdr *) skb->data;
