@@ -18,6 +18,7 @@
 #include <linux/delay.h>
 #include "ath9k.h"
 #include "btcoex.h"
+#include <time.h>
 
 static void ath9k_set_assoc_state(struct ath_softc *sc,
 				  struct ieee80211_vif *vif);
@@ -881,8 +882,31 @@ static u32 ath_tx_default_wait(u32 buf_size) {
 }
 
 static int counter = 1;
+static int all_counter = 0;
 static char records[1025] = {'\0'};
 static int record_counter = 0;
+static bool flag = false;
+static time_t end = time();
+static float total = ((float)end) - ((float)end);
+
+static float count_throughput() {
+	if (!flag) {
+		time_t cur = time();
+		time_t dur = cur - end;
+		end = cur;
+
+		total += dur;
+		float sec = ((float)dur) / CLOCKS_PER_SEC;
+		return (float)all_counter / sec;
+	}
+	else {
+		time_t cur = time();
+		time_t dur = end - cur;
+		end = cur;
+		total = total * (float)(all_counter - 1) / (float)all_counter + (float)dur / (float)all_counter;
+		return (float)all_counter / (float)(((float)total) / (float)CLOCKS_PER_SEC);
+	}
+}
 
 static void ath9k_tx(struct ieee80211_hw *hw,
 		     struct ieee80211_tx_control *control,
@@ -900,6 +924,8 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 
 	wait_ms = ath_tx_default_wait(free_buf);
 
+	all_counter++;
+
 	if (record_counter < 1024) {
 		records[record_counter] = (u8)(free_buf + 48);
 		record_counter++;
@@ -915,8 +941,10 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 		// } else if (free_buf > 50) {
 		// 	wait_time_multiplier--;
 		// }
+	  pr_info("Packets per sec: %f \n", count_throughput());
 	  pr_info("Number of free buffers: %d\n", free_buf);
 	  counter = 1;
+	  flag = true;
 	} else {
 	  counter++;
 	}
