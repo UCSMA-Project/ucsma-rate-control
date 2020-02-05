@@ -856,11 +856,11 @@ int ath_cw_update(struct ath_softc *sc, int qnum)
 	} else {
 		qi.tqi_cwmin = 1;
 		qi.tqi_cwmax = 1;
-		}
-
-	if (counter % 2000 == 0) {
-		pr_info("CW set to %d\n", qi.tqi_cwmin);
 	}
+
+	// if (counter % 2000 == 0) {
+	// 	pr_info("CW set to %d\n", qi.tqi_cwmin);
+	// }
 
 	if (!ath9k_hw_set_txq_props(ah, qnum, &qi)) {
 		ath_err(ath9k_hw_common(sc->sc_ah),
