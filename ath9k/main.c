@@ -881,6 +881,8 @@ static u32 ath_tx_default_wait(u32 buf_size) {
 }
 
 static int counter = 1;
+static char records[1025] = {'\0'};
+static int record_counter = 0;
 
 static void ath9k_tx(struct ieee80211_hw *hw,
 		     struct ieee80211_tx_control *control,
@@ -897,6 +899,14 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	free_buf = ath_tx_get_buf_size(hw->priv);
 
 	wait_ms = ath_tx_default_wait(free_buf);
+
+	if (record_counter < 1024) {
+		records[record_counter] = (u8)free_buf;
+		record_counter++;
+	} else {
+		pr_info("RECORD: %s \n", records);
+		record_counter = 0;
+	}
 
 	if (counter % 1000 == 0) {
 
