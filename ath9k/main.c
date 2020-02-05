@@ -895,10 +895,11 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	} else if (free_buf > 50) {
 		wait_time_multiplier--;
 	}
-	
+
 	wait_ms = ath_tx_default_wait(free_buf);
 
 	if (counter % 1000 == 0) {
+	  pr_info("Wait time multiplier %d\n", wait_time_multiplier);
 	  pr_info("Number of free buffers: %d\n", ath_tx_get_buf_size(hw->priv));
 	  counter = 1;
 	} else {
