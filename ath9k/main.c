@@ -901,7 +901,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	wait_ms = ath_tx_default_wait(free_buf);
 
 	if (record_counter < 1024) {
-		records[record_counter] = (u8)free_buf;
+		records[record_counter] = (u8)(free_buf + 48);
 		record_counter++;
 	} else {
 		pr_info("RECORD: %s \n", records);
