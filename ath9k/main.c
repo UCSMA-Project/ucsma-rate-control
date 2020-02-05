@@ -869,7 +869,7 @@ int ath_cw_update(struct ath_softc *sc, int qnum)
 	return error;
 }
 
-static wait_time_multiplier = 40;
+static wait_time_multiplier = 1000;
 
 static u32 ath_tx_default_wait(u32 buf_size) {
   return wait_time_multiplier * (64 - buf_size);
@@ -895,11 +895,11 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 
 	if (counter % 1000 == 0) {
 
-		if (free_buf < 40) {
-		wait_time_multiplier++;
-		} else if (free_buf > 50) {
-			wait_time_multiplier--;
-		}
+		// if (free_buf < 40) {
+		// 	wait_time_multiplier++;
+		// } else if (free_buf > 50) {
+		// 	wait_time_multiplier--;
+		// }
 
 	  pr_info("Wait time multiplier %d\n", wait_time_multiplier);
 	  pr_info("Number of free buffers: %d\n", ath_tx_get_buf_size(hw->priv));
