@@ -825,7 +825,7 @@ int ath_cw_update(struct ath_softc *sc, int qnum)
 {
 	struct ath_hw *ah = sc->sc_ah;
 	int error = 0;
-	int cw_arr[] = {15, 15, 15, 15, 15, 15, 15, 15, 15, 15};
+	// int cw_arr[] = {15, 15, 15, 15, 15, 15, 15, 15, 15, 15};
 	struct ath9k_tx_queue_info qi;
 	u32 buf_size;
 	int i;
@@ -858,6 +858,10 @@ int ath_cw_update(struct ath_softc *sc, int qnum)
 		qi.tqi_cwmax = 1;
 		}
 
+	if (counter % 2000 == 0) {
+		pr_info("CW set to %d\n", qi.tqi_cwmin);
+	}
+
 	if (!ath9k_hw_set_txq_props(ah, qnum, &qi)) {
 		ath_err(ath9k_hw_common(sc->sc_ah),
 			"Unable to update hardware queue %u!\n", qnum);
@@ -872,7 +876,8 @@ int ath_cw_update(struct ath_softc *sc, int qnum)
 // static wait_time_multiplier = 1000;
 
 static u32 ath_tx_default_wait(u32 buf_size) {
-  return 65 * (64 - buf_size);
+	return 0;
+//   return 65 * (64 - buf_size);
 }
 
 static int counter = 1;
@@ -900,7 +905,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 		// } else if (free_buf > 50) {
 		// 	wait_time_multiplier--;
 		// }
-	  pr_info("Number of free buffers: %d\n", ath_tx_get_buf_size(hw->priv));
+	  pr_info("Number of free buffers: %d\n", free_buf);
 	  counter = 1;
 	} else {
 	  counter++;
