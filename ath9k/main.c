@@ -876,7 +876,7 @@ int ath_cw_update(struct ath_softc *sc, int qnum)
 // static wait_time_multiplier = 1000;
 
 static u32 ath_tx_default_wait(u32 buf_size) {
-	return 1000;
+	return 1100;
 //   return 65 * (64 - buf_size);
 }
 
