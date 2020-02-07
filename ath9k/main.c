@@ -919,6 +919,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
  	u32 wait_ms;
 	int i;
 	u32 free_buf;
+	pr_info("The priority is %d\n", skb->priority);
 
 	free_buf = ath_tx_get_buf_size(hw->priv);
 
