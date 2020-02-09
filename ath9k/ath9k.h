@@ -91,7 +91,7 @@ int ath_descdma_setup(struct ath_softc *sc, struct ath_descdma *dd,
 	} while (0)
 
 #define ATH_RXBUF               256
-#define ATH_TXBUF               256
+#define ATH_TXBUF               384
 #define ATH_TXBUF_RESERVE       5
 #define ATH_MAX_QDEPTH          (ATH_TXBUF / 4 - ATH_TXBUF_RESERVE)
 #define ATH_TXMAXTRY            13
