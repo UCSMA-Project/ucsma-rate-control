@@ -839,7 +839,7 @@ int ath9k_init_device(u16 devid, struct ath_softc *sc,
 	reg = &common->regulatory;
 
 	/* Setup TX DMA */
-	error = ath_tx_init(sc, ATH_TXBUF); //ATH_TXBUF
+	error = ath_tx_init(sc, ATH_TXBUF * 7); //ATH_TXBUF
 	if (error != 0)
 		goto deinit;
 
