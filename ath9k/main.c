@@ -22,6 +22,8 @@
 static void ath9k_set_assoc_state(struct ath_softc *sc,
 				  struct ieee80211_vif *vif);
 
+int buf_counter = 0;
+
 u8 ath9k_parse_mpdudensity(u8 mpdudensity)
 {
 	/*
@@ -896,7 +898,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	int i;
 	u32 free_buf;
 
-	free_buf = ath_tx_get_buf_size(hw->priv);
+	buf_counter = ath_tx_get_buf_size(hw->priv);
 	wait_ms = ath_tx_default_wait(free_buf);
 
 	skb->priority = 3;
