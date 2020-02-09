@@ -21,6 +21,13 @@
 #include "packetspammer.h"
 #include "radiotap.h"
 #include <pthread.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<errno.h>
+#include<fcntl.h>
+#include<string.h>
+#include<unistd.h>
+
 
 /* wifi bitrate to use in 500kHz units */
 
