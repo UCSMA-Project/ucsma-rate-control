@@ -22,6 +22,8 @@
 static void ath9k_set_assoc_state(struct ath_softc *sc,
 				  struct ieee80211_vif *vif);
 
+int buf_counter = 0;
+
 u8 ath9k_parse_mpdudensity(u8 mpdudensity)
 {
 	/*
