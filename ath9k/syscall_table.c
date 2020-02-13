@@ -1,6 +1,6 @@
 #include <linux/module.h>
 #include <linux/kernel.h>
-#include <linux/syscall.h>
+#include <sys/syscall.h>
 
 extern void* sys_call_table[];
 
