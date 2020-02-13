@@ -8,13 +8,13 @@
 // #include <asm/ptrace.h>
 // #include <linux/sched.h>
 // #include <linux/cred.h>
-#include <asm/unistd.h>
+// #include <asm/unistd.h>
 #include <linux/syscalls.h>
 
 // extern void* sys_call_table[];
 
 static int __init init_function(void) {
-    pr_info("SYSCALL_TBALE: %d\n", FAKE_SYSCALL_NUM);
+    // pr_info("SYSCALL_TBALE: %d\n", FAKE_SYSCALL_NUM);
     return 0;
 }
 
