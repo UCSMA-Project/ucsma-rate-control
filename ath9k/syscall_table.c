@@ -9,7 +9,7 @@
 // #include <linux/sched.h>
 // #include <linux/cred.h>
 // #include <asm/unistd.h>
-#include <linux/syscalls.h>
+// #include <linux/syscalls.h>
 
 // extern void* sys_call_table[];
 
