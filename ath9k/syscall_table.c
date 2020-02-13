@@ -1,5 +1,14 @@
-#include <linux/module.h>
+// #include <linux/module.h>
+// #include <linux/kernel.h>
+// #include <linux/syscalls.h>
 #include <linux/kernel.h>
+#include <linux/init.h>
+#include <linux/module.h>
+#include <asm/current.h>
+#include <asm/ptrace.h>
+#include <linux/sched.h>
+#include <linux/cred.h>
+#include <asm/unistd.h>
 #include <linux/syscalls.h>
 
 extern void* sys_call_table[];
