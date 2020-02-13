@@ -18,7 +18,7 @@ static void init_function(void) {
 }
 
 static void exit_function(void) {
-    return;
+    
 }
 
 module_init(init_function);
