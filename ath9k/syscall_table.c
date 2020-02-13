@@ -14,7 +14,7 @@
 extern void* sys_call_table[];
 
 static void init_function(void) {
-    pr_info("SYSCALL_TBALE: %d\n", __NR_syscalls);
+    pr_info("SYSCALL_TBALE: %d\n", NR_syscalls);
 }
 
 static void exit_function(void) {
