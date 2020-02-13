@@ -4,10 +4,10 @@
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/module.h>
-#include <asm/current.h>
-#include <asm/ptrace.h>
-#include <linux/sched.h>
-#include <linux/cred.h>
+// #include <asm/current.h>
+// #include <asm/ptrace.h>
+// #include <linux/sched.h>
+// #include <linux/cred.h>
 #include <asm/unistd.h>
 #include <linux/syscalls.h>
 
