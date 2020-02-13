@@ -2,7 +2,7 @@
 // #include <linux/kernel.h>
 // #include <linux/syscalls.h>
 // #include <linux/kernel.h>
-#include <linux/init.h>
+// #include <linux/init.h>
 #include <linux/module.h>
 // #include <asm/current.h>
 // #include <asm/ptrace.h>
