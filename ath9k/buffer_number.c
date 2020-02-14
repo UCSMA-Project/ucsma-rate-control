@@ -130,7 +130,7 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
       return (size_of_message=0);  // clear the position to the start and return 0
    }
    else {
-      printk(KERN_INFO "EBBChar: Failed to send %d characters to the user\n", error_count);
+      // printk(KERN_INFO "EBBChar: Failed to send %d characters to the user\n", error_count);
       return -EFAULT;              // Failed -- return a bad address message (i.e. -14)
    }
 }
