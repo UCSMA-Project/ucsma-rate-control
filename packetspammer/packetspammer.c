@@ -435,5 +435,5 @@ main(int argc, char *argv[])
 
 int wait(int buf) {
 	int use = 80 - buf;
-	return  * use;
+	return 10 * use;
 }
