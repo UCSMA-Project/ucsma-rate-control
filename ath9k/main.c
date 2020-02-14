@@ -824,7 +824,7 @@ u32 ath_tx_get_buf_size(struct ath_softc *sc) {
 	return size;
 }
 
-int ath_cw_update(struct ath_softc *sc, int qnum)
+int ath_cw_update(struct ath_softc *sc, int qnum, int buf_size)
 {
 	struct ath_hw *ah = sc->sc_ah;
 	int error = 0;
@@ -837,8 +837,6 @@ int ath_cw_update(struct ath_softc *sc, int qnum)
 
 	ath9k_hw_get_txq_props(ah, qnum, &qi);
 
-	buf_size = ath_tx_get_buf_size(sc);
-
 	// for (i = 9; i >= 0; i--) {
 	//   if (buf_size > i * 64) {
 	//     qi.tqi_cwmin = cw_arr[i];
@@ -847,13 +845,13 @@ int ath_cw_update(struct ath_softc *sc, int qnum)
 	//   }
 	// }
 
-	if (buf_size > 32) {
+	if (buf_size > 40) {
 		qi.tqi_cwmin = 15;
 		qi.tqi_cwmax = 15;
-	} else if (buf_size > 16) {
+	} else if (buf_size > 20) {
 		qi.tqi_cwmin = 7;
 		qi.tqi_cwmax = 7;
-	} else if (buf_size > 8) {
+	} else if (buf_size > 10) {
 		qi.tqi_cwmin = 3;
 		qi.tqi_cwmax = 3;
 	} else {
@@ -900,7 +898,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	u32 free_buf;
 
 	buf_counter = ath_tx_get_buf_size(hw->priv);
-	wait_ms = ath_tx_default_wait(free_buf);
+	// wait_ms = ath_tx_default_wait(free_buf);
 
 	skb->priority = 3;
 
@@ -912,18 +910,18 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	// 	record_counter = 0;
 	// }
 
-	if (counter % 1000 == 0) {
-	  pr_info("Number of free buffers: %d\n", free_buf);
-	  counter = 1;
-	} else {
-	  counter++;
-	}
+	// if (counter % 1000 == 0) {
+	//   pr_info("Number of free buffers: %d\n", free_buf);
+	//   counter = 1;
+	// } else {
+	//   counter++;
+	// }
 
 	sc = hw->priv;
 
 	// Update all txq buffers
 	for (i = 0; i < IEEE80211_NUM_ACS; i++) {
-	  ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum);
+	  ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
 	}
 
 	common = ath9k_hw_common(sc->sc_ah);
