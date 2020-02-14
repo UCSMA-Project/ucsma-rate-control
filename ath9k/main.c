@@ -824,13 +824,12 @@ u32 ath_tx_get_buf_size(struct ath_softc *sc) {
 	return size;
 }
 
-int ath_cw_update(struct ath_softc *sc, int qnum, int buf_size)
+int ath_cw_update(struct ath_softc *sc, int qnum, u32 buf_size)
 {
 	struct ath_hw *ah = sc->sc_ah;
 	int error = 0;
 	// int cw_arr[] = {15, 15, 15, 15, 15, 15, 15, 15, 15, 15};
 	struct ath9k_tx_queue_info qi;
-	u32 buf_size;
 	int i;
 
 	BUG_ON(sc->tx.txq[qnum].axq_qnum != qnum);
