@@ -410,12 +410,11 @@ main(int argc, char *argv[])
 	u32 sent_packet = 0;
 
     int fd = open("/dev/ebbchar", O_RDWR);
-	int count = 0;
+	int count_log = 0;
 	int wait;
 	while (!fBrokenSocket) {
 		r = pcap_inject(ppcap, u8aSendBuffer, send_length);
 		count++;
-		wait = wait(buf_free);
 		stats->sent_byte += frame_len;
 		stats->sent_packet++;
 		if (r != send_length) {
@@ -424,8 +423,9 @@ main(int argc, char *argv[])
 		}
 		int buf_free;
 		read(fd, &buf_free, sizeof(int));
-		if (count % 1000 == 0) {
-			count = 0;
+		wait = wait(buf_free);
+		if (count_log % 1000 == 0) {
+			count_log = 0;
 			printf("Waiting for: %d\n", wait);
 		}
 		if (wait)
