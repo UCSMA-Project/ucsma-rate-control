@@ -126,7 +126,7 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
    error_count = copy_to_user(buffer, &counter, sizeof(int));
 
    if (error_count==0){            // if true then have success
-      printk(KERN_INFO "EBBChar: Sent %d characters to the user\n", size_of_message);
+      // printk(KERN_INFO "EBBChar: Sent %d characters to the user\n", size_of_message);
       return (size_of_message=0);  // clear the position to the start and return 0
    }
    else {
