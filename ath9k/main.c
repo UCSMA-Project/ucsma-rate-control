@@ -913,26 +913,18 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	// }
 
 	if (counter % 1000 == 0) {
-
-		// if (free_buf < 40) {
-		// 	wait_time_multiplier++;
-		// } else if (free_buf > 50) {
-		// 	wait_time_multiplier--;
-		// }
 	  pr_info("Number of free buffers: %d\n", free_buf);
 	  counter = 1;
 	} else {
 	  counter++;
 	}
-	
-	// udelay(wait_ms);
 
 	sc = hw->priv;
 
-	// // Update all txq buffers
-	// for (i = 0; i < IEEE80211_NUM_ACS; i++) {
-	//   ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum);
-	// }
+	// Update all txq buffers
+	for (i = 0; i < IEEE80211_NUM_ACS; i++) {
+	  ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum);
+	}
 
 	common = ath9k_hw_common(sc->sc_ah);
 	hdr = (struct ieee80211_hdr *) skb->data;
