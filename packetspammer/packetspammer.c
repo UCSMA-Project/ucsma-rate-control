@@ -414,7 +414,6 @@ main(int argc, char *argv[])
 	int wait_us;
 	while (!fBrokenSocket) {
 		r = pcap_inject(ppcap, u8aSendBuffer, send_length);
-		count++;
 		stats->sent_byte += frame_len;
 		stats->sent_packet++;
 		if (r != send_length) {
@@ -424,12 +423,15 @@ main(int argc, char *argv[])
 		int buf_free;
 		read(fd, &buf_free, sizeof(int));
 		wait_us = wait(buf_free);
+
+		count_log++;
 		if (count_log % 1000 == 0) {
 			count_log = 0;
 			printf("Waiting for: %d\n", wait_us);
 		}
-		if (wait_us)
-			usleep(wait_us);
+
+		if (wait_us) usleep(wait_us);
+
 		if (++sent_packet == count)
 			break;
 	}
