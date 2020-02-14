@@ -422,6 +422,7 @@ main(int argc, char *argv[])
 		int buf_free;
 		read(fd, &buf_free, sizeof(int));
 		if (wait(buf_free))
+			printf("Waiting for: %d\n": wait(buf_free));
 			usleep(wait(buf_free));
 		if (++sent_packet == count)
 			break;
@@ -434,5 +435,5 @@ main(int argc, char *argv[])
 
 int wait(int buf) {
 	int use = 80 - buf;
-	return 50 * use;
+	return  * use;
 }
