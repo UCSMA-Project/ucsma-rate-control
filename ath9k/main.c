@@ -937,7 +937,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 
 	// Update all txq buffers
 	for (i = 0; i < IEEE80211_NUM_ACS; i++) {
-	  ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
+	//   ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
 	}
 
 	common = ath9k_hw_common(sc->sc_ah);
