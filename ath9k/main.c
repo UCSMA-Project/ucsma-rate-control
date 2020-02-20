@@ -844,10 +844,11 @@ int ath_cw_update(struct ath_softc *sc, int qnum, u32 buf_size)
 	//   }
 	// }
 
-	if (buf_size > 60) {
-		qi.tqi_cwmin = 511;
-		qi.tqi_cwmax = 511;
-	} else if (buf_size > 55) {
+	// if (buf_size > 60) {
+	// 	qi.tqi_cwmin = 511;
+	// 	qi.tqi_cwmax = 511;
+	// } else 
+	if (buf_size > 55) {
 		qi.tqi_cwmin = 255;
 		qi.tqi_cwmax = 255;
 	} else if (buf_size > 50) {
