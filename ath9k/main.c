@@ -844,21 +844,20 @@ int ath_cw_update(struct ath_softc *sc, int qnum, u32 buf_size)
 	//   }
 	// }
 
-	if (buf_size > 60) {
+	if (buf_size > 70) {
 		qi.tqi_cwmin = 511;
 		qi.tqi_cwmax = 511;
-	} else 
-	if (buf_size > 55) {
+	} else if (buf_size > 65) {
 		qi.tqi_cwmin = 255;
 		qi.tqi_cwmax = 255;
-	} else if (buf_size > 50) {
+	} else if (buf_size > 60) {
 		qi.tqi_cwmin = 127;
 		qi.tqi_cwmax = 127;
-	} else if (buf_size > 40) {
+	} else if (buf_size > 50) {
 		qi.tqi_cwmin = 63;
 		qi.tqi_cwmax = 63;
 	} else 
-	if (buf_size > 30) {
+	if (buf_size > 40) {
 		qi.tqi_cwmin = 31;
 		qi.tqi_cwmax = 31;
 	} else if (buf_size > 20) {
