@@ -844,20 +844,20 @@ int ath_cw_update(struct ath_softc *sc, int qnum, u32 buf_size)
 	//   }
 	// }
 
-	// if (buf_size > 60) {
-	// 	qi.tqi_cwmin = 511;
-	// 	qi.tqi_cwmax = 511;
-	// } else 
-	// if (buf_size > 55) {
-	// 	qi.tqi_cwmin = 255;
-	// 	qi.tqi_cwmax = 255;
-	// } else if (buf_size > 50) {
-	// 	qi.tqi_cwmin = 127;
-	// 	qi.tqi_cwmax = 127;
-	// } else if (buf_size > 40) {
-	// 	qi.tqi_cwmin = 63;
-	// 	qi.tqi_cwmax = 63;
-	// } else 
+	if (buf_size > 60) {
+		qi.tqi_cwmin = 511;
+		qi.tqi_cwmax = 511;
+	} else 
+	if (buf_size > 55) {
+		qi.tqi_cwmin = 255;
+		qi.tqi_cwmax = 255;
+	} else if (buf_size > 50) {
+		qi.tqi_cwmin = 127;
+		qi.tqi_cwmax = 127;
+	} else if (buf_size > 40) {
+		qi.tqi_cwmin = 63;
+		qi.tqi_cwmax = 63;
+	} else 
 	if (buf_size > 30) {
 		qi.tqi_cwmin = 31;
 		qi.tqi_cwmax = 31;
@@ -937,7 +937,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 
 	// Update all txq buffers
 	for (i = 0; i < IEEE80211_NUM_ACS; i++) {
-	//   ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
+		ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
 	}
 
 	common = ath9k_hw_common(sc->sc_ah);
