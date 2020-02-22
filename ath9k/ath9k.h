@@ -861,4 +861,5 @@ static inline int ath_ahb_init(void) { return 0; };
 static inline void ath_ahb_exit(void) {};
 #endif
 extern int buf_counter;
+extern int has_changed;
 #endif /* ATH9K_H */
