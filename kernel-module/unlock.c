@@ -6,7 +6,8 @@
 #include <linux/kthread.h>
 #include <linux/sched.h>
 #include <linux/delay.h>
-#include "ath9k.h"
+
+extern int has_changed;
 
 struct gpio unlock_gpios[] = {
   {21, GPIOF_OUT_INIT_LOW, "UNLOCK_OUT"},
