@@ -856,10 +856,9 @@ int ath_cw_update(struct ath_softc *sc, int qnum, u32 buf_size)
 	} else if (buf_size > 50) {
 		qi.tqi_cwmin = 255;
 		qi.tqi_cwmax = 255;
-	} else 
-	if (buf_size > 40) {
-		qi.tqi_cwmin = 64;
-		qi.tqi_cwmax = 64;
+	} else if (buf_size > 40) {
+		qi.tqi_cwmin = 63;
+		qi.tqi_cwmax = 63;
 	} else if (buf_size > 20) {
 		qi.tqi_cwmin = 15;
 		qi.tqi_cwmax = 15;
@@ -899,7 +898,8 @@ static u32 ath_tx_default_wait(u32 buf_size) {
 static int counter = 1;
 static char records[1025] = {'\0'};
 static int record_counter = 0;
-
+int has_changed = 0;
+EXPORT_SYMBOL(has_changed);
 static void ath9k_tx(struct ieee80211_hw *hw,
 		     struct ieee80211_tx_control *control,
 		     struct sk_buff *skb) {
@@ -935,8 +935,11 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	sc = hw->priv;
 
 	// Update all txq buffers
-	for (i = 0; i < IEEE80211_NUM_ACS; i++) {
-		ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
+	if (has_changed) {
+		for (i = 0; i < IEEE80211_NUM_ACS; i++) {
+			ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
+		}
+		has_changed = 0;
 	}
 
 	common = ath9k_hw_common(sc->sc_ah);
