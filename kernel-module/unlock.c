@@ -6,6 +6,7 @@
 #include <linux/kthread.h>
 #include <linux/sched.h>
 #include <linux/delay.h>
+#include "ath9k.h"
 
 struct gpio unlock_gpios[] = {
   {21, GPIOF_OUT_INIT_LOW, "UNLOCK_OUT"},
@@ -57,7 +58,8 @@ static enum hrtimer_restart unlock_timer_handler(struct hrtimer *timer) {
   gpio_set_value(unlock_gpios[0].gpio, 1);
   udelay(1);
   gpio_set_value(unlock_gpios[0].gpio, 0);
-
+  
+  has_changed = 1;
   hrtimer_forward_now(timer, ktime_set(0, T * 1000));
 
   return HRTIMER_RESTART;
@@ -81,6 +83,7 @@ static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
   gpio_set_value(unlock_gpios[0].gpio, 1);	//relay the unlocking signal
   udelay(1);
   gpio_set_value(unlock_gpios[0].gpio, 0);
+  has_changed = 1;
 
   get_random_bytes(&rng, sizeof(rng));
   rng %= (Delta + Delta);
