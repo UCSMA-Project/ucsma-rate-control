@@ -898,8 +898,10 @@ static u32 ath_tx_default_wait(u32 buf_size) {
 static int counter = 1;
 static char records[1025] = {'\0'};
 static int record_counter = 0;
+
 int has_changed = 0;
 EXPORT_SYMBOL(has_changed);
+
 static void ath9k_tx(struct ieee80211_hw *hw,
 		     struct ieee80211_tx_control *control,
 		     struct sk_buff *skb) {
