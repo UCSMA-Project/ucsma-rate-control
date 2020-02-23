@@ -938,6 +938,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 
 	// Update all txq buffers
 	if (has_changed) {
+		pr_info("Updating cw values\n");
 		for (i = 0; i < IEEE80211_NUM_ACS; i++) {
 			ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
 		}
