@@ -22,7 +22,7 @@ u32 get_buf_size(struct list_head* txbuf) {
 	return size;
 }
 
-static void edit_contentionWindow(int window_size);
+static void edit_contentionWindow(u32 window_size);
 struct gpio unlock_gpios[] = {
   {21, GPIOF_OUT_INIT_LOW, "UNLOCK_OUT"},
   {22, GPIOF_IN, "UNLOCK_IN" },
