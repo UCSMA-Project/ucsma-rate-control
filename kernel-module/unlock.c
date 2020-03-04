@@ -88,7 +88,7 @@ static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
   }
   int buf_size = get_buf_size(txbuf_fff);
   printk(KERN_INFO "buf size is %d\n", buf_size);
-  int cw_val = 0;
+  u32 cw_val = 1;
   if (buf_size > 70) {
 		cw_val = 511;
 	} else if (buf_size > 65) {
@@ -109,7 +109,7 @@ static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
 	else {
     cw_val = 1;
 	}
-  // edit_contentionWindow(cw_val);
+  edit_contentionWindow(15);
 
   struct timespec now, diff;
   unsigned int next_timer, backoff, rng;
@@ -239,13 +239,13 @@ static void __exit unlock_exit(void)
  * create the function for polling the register to verify the changes
  * to the contention window max/min value and backoff persistence factor
  */
-static void edit_contentionWindow(int window_size)
+static void edit_contentionWindow(u32 window_size)
 {
   // int ret;
   u32 val, set, qnum;
 
    // use loop to unify operations on all 10 DCU units
-  for (qnum = 0; qnum < 10; qnum = qnum+1) {
+  for (qnum = 0; qnum < 8; qnum = qnum+1) {
     // set CW_max to original min value, so it's easier to observe 
     // upperbound
     set = 0x000fffff;
@@ -255,7 +255,7 @@ static void edit_contentionWindow(int window_size)
     set &= window_size;
     REG_WRITE(ath9k_ah, AR_DLCL_IFS(qnum), set);
   }
-  for (qnum = 0; qnum < 10; qnum++) {
+  for (qnum = 0; qnum < 8; qnum++) {
     val = REG_READ(ath9k_ah, AR_DLCL_IFS(qnum));
     u32 cwmin = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMIN);
     u32 cwmax = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMAX);
