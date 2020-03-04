@@ -8,7 +8,7 @@
 #include <linux/delay.h>
 
 extern int has_changed;
-
+static void edit_contentionWindow();
 struct gpio unlock_gpios[] = {
   {21, GPIOF_OUT_INIT_LOW, "UNLOCK_OUT"},
   {22, GPIOF_IN, "UNLOCK_IN" },
@@ -192,6 +192,37 @@ static void __exit unlock_exit(void)
   printk(KERN_INFO "U-CSMA - unlock module unloaded\n");
   return;
 }
+
+/*
+ * create the function for polling the register to verify the changes
+ * to the contention window max/min value and backoff persistence factor
+ */
+static void edit_contentionWindow(int window_size)
+{
+  // int ret;
+  u32 val, set, qnum;
+
+   // use loop to unify operations on all 10 DCU units
+  for (qnum = 0; qnum < 10; qnum = qnum+1) {
+    // set CW_max to original min value, so it's easier to observe 
+    // upperbound
+    set = 0x002fffff;
+    int tmp = window_size;
+    tmp <<= 10;
+    window_size |= tmp;
+    set &= window_size;
+    REG_WRITE(ath9k_ah, AR_DLCL_IFS(qnum), set);
+  }
+  for (qnum = 0; qnum < 10; qnum++) {
+    val = REG_READ(ath9k_ah, AR_DLCL_IFS(qnum));
+    cwmin = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMIN);
+    cwmax = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMAX);
+    aifs = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_AIFS);
+    printk(KERN_INFO "===William CW: reg value D_LCL_IFS for DCU%d: %x===\n", qnum, val);
+    printk(KERN_INFO "cwmin: %d, cwmax: %d, aifs: %d\n", cwmin, cwmax, aifs);
+  } 
+}
+
 
 module_init(unlock_init);
 module_exit(unlock_exit);
