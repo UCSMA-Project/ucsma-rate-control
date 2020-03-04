@@ -109,7 +109,7 @@ static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
 	else {
     cw_val = 1;
 	}
-  // edit_contentionWindow(15);
+  edit_contentionWindow(15);
 
   struct timespec now, diff;
   unsigned int next_timer, backoff, rng;
