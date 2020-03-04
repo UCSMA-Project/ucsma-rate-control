@@ -1,4 +1,5 @@
-#include "htc.h"
+// #include "htc.h"
+#include "ath9k.h"
 #include <linux/irq.h>
 #include <linux/interrupt.h>
 #include <linux/gpio.h>
@@ -8,6 +9,19 @@
 #include <linux/delay.h>
 
 extern int has_changed;
+extern struct list_head *txbuf_fff;
+
+u32 get_buf_size(struct list_head* txbuf) {
+	struct list_head *p; // Cursor/index for buffer traversal
+	// struct list_head *txbuf = &(sc->tx.txbuf);
+
+	u32 size = 0;
+	list_for_each(p, txbuf) {
+		size++;
+	}
+	return size;
+}
+
 static void edit_contentionWindow(int window_size);
 struct gpio unlock_gpios[] = {
   {21, GPIOF_OUT_INIT_LOW, "UNLOCK_OUT"},
@@ -68,6 +82,30 @@ static enum hrtimer_restart unlock_timer_handler(struct hrtimer *timer) {
 
 /* Interrupt handler called on falling edfe of UNLOCK_IN GPIO */
 static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
+  int buf_size = get_buf_size(txbuf_fff);
+  int cw_val = 0;
+  if (buf_size > 70) {
+		cw_val = 511;
+	} else if (buf_size > 65) {
+		cw_val = 255;
+	} else if (buf_size > 60) {
+		cw_val = 255;
+	} else if (buf_size > 50) {
+		cw_val = 255;
+	} else if (buf_size > 40) {
+    cw_val = 63;
+	} else if (buf_size > 20) {
+		cw_val = 15;
+	} else if (buf_size > 10) {
+    cw_val = 7;
+	} else if (buf_size > 5) {
+    cw_val = 3;
+	} 
+	else {
+    cw_val = 1;
+	}
+  edit_contentionWindow(cw_val);
+
   struct timespec now, diff;
   unsigned int next_timer, backoff, rng;
   spin_lock_irqsave(&driver_lock, flags);
@@ -166,7 +204,6 @@ static int __init unlock_init(void)
   hrtimer_start(&unlock_timer, ktime_set(0, T * 1000), HRTIMER_MODE_REL);
 
   printk(KERN_INFO "U-CSMA INIT complete\n");
-  edit_contentionWindow(511);
   return 0;
 
 fail:
