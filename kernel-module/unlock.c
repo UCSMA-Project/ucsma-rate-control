@@ -8,7 +8,7 @@
 #include <linux/delay.h>
 
 extern int has_changed;
-static void edit_contentionWindow();
+static void edit_contentionWindow(int window_size);
 struct gpio unlock_gpios[] = {
   {21, GPIOF_OUT_INIT_LOW, "UNLOCK_OUT"},
   {22, GPIOF_IN, "UNLOCK_IN" },
@@ -166,7 +166,7 @@ static int __init unlock_init(void)
   hrtimer_start(&unlock_timer, ktime_set(0, T * 1000), HRTIMER_MODE_REL);
 
   printk(KERN_INFO "U-CSMA INIT complete\n");
-
+  edit_contentionWindow(511);
   return 0;
 
 fail:
@@ -215,9 +215,9 @@ static void edit_contentionWindow(int window_size)
   }
   for (qnum = 0; qnum < 10; qnum++) {
     val = REG_READ(ath9k_ah, AR_DLCL_IFS(qnum));
-    cwmin = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMIN);
-    cwmax = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMAX);
-    aifs = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_AIFS);
+    u32 cwmin = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMIN);
+    u32 cwmax = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMAX);
+    u32 aifs = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_AIFS);
     printk(KERN_INFO "===William CW: reg value D_LCL_IFS for DCU%d: %x===\n", qnum, val);
     printk(KERN_INFO "cwmin: %d, cwmax: %d, aifs: %d\n", cwmin, cwmax, aifs);
   } 
