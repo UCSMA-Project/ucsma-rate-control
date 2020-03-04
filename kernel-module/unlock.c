@@ -206,7 +206,7 @@ static void edit_contentionWindow(int window_size)
   for (qnum = 0; qnum < 10; qnum = qnum+1) {
     // set CW_max to original min value, so it's easier to observe 
     // upperbound
-    set = 0x002fffff;
+    set = 0x000fffff;
     int tmp = window_size;
     tmp <<= 10;
     window_size |= tmp;
