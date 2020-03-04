@@ -73,6 +73,33 @@ static enum hrtimer_restart unlock_timer_handler(struct hrtimer *timer) {
   gpio_set_value(unlock_gpios[0].gpio, 1);
   udelay(1);
   gpio_set_value(unlock_gpios[0].gpio, 0);
+  if (!txbuf_fff) {
+    printk(KERN_INFO "FUCKED!\n");
+    return;
+  }
+  int buf_size = get_buf_size(txbuf_fff);
+  printk(KERN_INFO "buf size is %d\n", buf_size);
+  u32 cw_val = 1;
+  if (buf_size > 70) {
+		cw_val = 511;
+	} else if (buf_size > 65) {
+		cw_val = 255;
+	} else if (buf_size > 60) {
+		cw_val = 255;
+	} else if (buf_size > 50) {
+		cw_val = 255;
+	} else if (buf_size > 40) {
+    cw_val = 63;
+	} else if (buf_size > 20) {
+		cw_val = 15;
+	} else if (buf_size > 10) {
+    cw_val = 7;
+	} else if (buf_size > 5) {
+    cw_val = 3;
+	} else {
+    cw_val = 1;
+	}
+  edit_contentionWindow(cw_val);
   
   has_changed = 1;
   hrtimer_forward_now(timer, ktime_set(0, T * 1000));
