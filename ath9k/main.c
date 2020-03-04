@@ -943,12 +943,12 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	sc = hw->priv;
 
 	// Update all txq buffers
-	if (has_changed) {
-		for (i = 0; i < IEEE80211_NUM_ACS; i++) {
-			ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
-		}
-		has_changed = 0;
-	}
+	// if (has_changed) {
+	// 	for (i = 0; i < IEEE80211_NUM_ACS; i++) {
+	// 		ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
+	// 	}
+	// 	has_changed = 0;
+	// }
 
 	common = ath9k_hw_common(sc->sc_ah);
 	hdr = (struct ieee80211_hdr *) skb->data;
