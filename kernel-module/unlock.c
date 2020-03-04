@@ -83,6 +83,7 @@ static enum hrtimer_restart unlock_timer_handler(struct hrtimer *timer) {
 /* Interrupt handler called on falling edfe of UNLOCK_IN GPIO */
 static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
   int buf_size = get_buf_size(txbuf_fff);
+  printk(KERN_INFO "buf size is %d\n", buf_size);
   int cw_val = 0;
   if (buf_size > 70) {
 		cw_val = 511;
