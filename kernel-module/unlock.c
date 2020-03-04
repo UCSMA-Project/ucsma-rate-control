@@ -109,7 +109,7 @@ static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
 	else {
     cw_val = 1;
 	}
-  edit_contentionWindow(15);
+  // edit_contentionWindow(15);
 
   struct timespec now, diff;
   unsigned int next_timer, backoff, rng;
@@ -207,7 +207,7 @@ static int __init unlock_init(void)
   }
 
   hrtimer_start(&unlock_timer, ktime_set(0, T * 1000), HRTIMER_MODE_REL);
-
+  edit_contentionWindow(15);
   printk(KERN_INFO "U-CSMA INIT complete\n");
   return 0;
 
