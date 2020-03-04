@@ -253,14 +253,14 @@ static void edit_contentionWindow(u32 window_size)
     set &= window_size;
     REG_WRITE(ath9k_ah, AR_DLCL_IFS(qnum), set);
   }
-  for (qnum = 0; qnum < 8; qnum++) {
-    val = REG_READ(ath9k_ah, AR_DLCL_IFS(qnum));
-    u32 cwmin = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMIN);
-    u32 cwmax = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMAX);
-    u32 aifs = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_AIFS);
-    printk(KERN_INFO "===William CW: reg value D_LCL_IFS for DCU%d: %x===\n", qnum, val);
-    printk(KERN_INFO "cwmin: %d, cwmax: %d, aifs: %d\n", cwmin, cwmax, aifs);
-  } 
+  // for (qnum = 0; qnum < 8; qnum++) {
+  //   val = REG_READ(ath9k_ah, AR_DLCL_IFS(qnum));
+  //   u32 cwmin = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMIN);
+  //   u32 cwmax = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMAX);
+  //   u32 aifs = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_AIFS);
+  //   printk(KERN_INFO "===William CW: reg value D_LCL_IFS for DCU%d: %x===\n", qnum, val);
+  //   printk(KERN_INFO "cwmin: %d, cwmax: %d, aifs: %d\n", cwmin, cwmax, aifs);
+  // } 
 }
 
 
