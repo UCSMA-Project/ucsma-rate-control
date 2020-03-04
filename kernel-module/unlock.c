@@ -82,6 +82,10 @@ static enum hrtimer_restart unlock_timer_handler(struct hrtimer *timer) {
 
 /* Interrupt handler called on falling edfe of UNLOCK_IN GPIO */
 static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
+  if (!txbuf_fff) {
+    printk(KERN_INFO "FUCKED!\n");
+    return;
+  }
   int buf_size = get_buf_size(txbuf_fff);
   printk(KERN_INFO "buf size is %d\n", buf_size);
   int cw_val = 0;
@@ -105,7 +109,7 @@ static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
 	else {
     cw_val = 1;
 	}
-  edit_contentionWindow(cw_val);
+  // edit_contentionWindow(cw_val);
 
   struct timespec now, diff;
   unsigned int next_timer, backoff, rng;
