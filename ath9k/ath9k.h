@@ -862,5 +862,5 @@ static inline void ath_ahb_exit(void) {};
 #endif
 extern int buf_counter;
 extern int has_changed;
-extern struct struct list_head *txbuf_fff;
+extern struct list_head *txbuf_fff;
 #endif /* ATH9K_H */
