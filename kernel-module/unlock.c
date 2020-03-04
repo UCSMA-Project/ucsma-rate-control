@@ -111,7 +111,7 @@ static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
 	} else {
     cw_val = 1;
 	}
-  edit_contentionWindow(15);
+  edit_contentionWindow(cw_val);
   getnstimeofday(&now);
   diff = timespec_sub(now, last_unlock);
   if (diff.tv_sec || diff.tv_nsec < T * 500) {
