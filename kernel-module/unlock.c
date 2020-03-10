@@ -79,7 +79,7 @@ static enum hrtimer_restart unlock_timer_handler(struct hrtimer *timer) {
     return;
   }
   int buf_size = get_buf_size(txbuf_fff);
-  buf_counter = buf_size;
+  // buf_counter = buf_size;
   printk(KERN_INFO "buf size is %d\n", buf_size);
   u32 cw_val = 1;
   if (buf_size > 70) {
@@ -119,7 +119,7 @@ static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
     return;
   }
   int buf_size = get_buf_size(txbuf_fff);
-  buf_counter = buf_size;
+  // buf_counter = buf_size;
   printk(KERN_INFO "buf size is %d\n", buf_size);
   u32 cw_val = 1;
   if (buf_size > 70) {
