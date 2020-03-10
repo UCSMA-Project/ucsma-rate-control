@@ -10,6 +10,7 @@
 
 extern int has_changed;
 extern struct list_head *txbuf_fff;
+extern int buf_counter;
 
 u32 get_buf_size(struct list_head* txbuf) {
 	struct list_head *p; // Cursor/index for buffer traversal
@@ -73,33 +74,34 @@ static enum hrtimer_restart unlock_timer_handler(struct hrtimer *timer) {
   gpio_set_value(unlock_gpios[0].gpio, 1);
   udelay(1);
   gpio_set_value(unlock_gpios[0].gpio, 0);
-  // if (!txbuf_fff) {
-  //   printk(KERN_INFO "FUCKED!\n");
-  //   return;
-  // }
-  // int buf_size = get_buf_size(txbuf_fff);
-  // printk(KERN_INFO "buf size is %d\n", buf_size);
-  // u32 cw_val = 1;
-  // if (buf_size > 70) {
-	// 	cw_val = 511;
-	// } else if (buf_size > 65) {
-	// 	cw_val = 255;
-	// } else if (buf_size > 60) {
-	// 	cw_val = 255;
-	// } else if (buf_size > 50) {
-	// 	cw_val = 255;
-	// } else if (buf_size > 40) {
-  //   cw_val = 63;
-	// } else if (buf_size > 20) {
-	// 	cw_val = 15;
-	// } else if (buf_size > 10) {
-  //   cw_val = 7;
-	// } else if (buf_size > 5) {
-  //   cw_val = 3;
-	// } else {
-  //   cw_val = 1;
-	// }
-  // edit_contentionWindow(cw_val);
+  if (!txbuf_fff) {
+    printk(KERN_INFO "FUCKED!\n");
+    return;
+  }
+  int buf_size = get_buf_size(txbuf_fff);
+  buf_counter = buf_size;
+  printk(KERN_INFO "buf size is %d\n", buf_size);
+  u32 cw_val = 1;
+  if (buf_size > 70) {
+		cw_val = 511;
+	} else if (buf_size > 65) {
+		cw_val = 255;
+	} else if (buf_size > 60) {
+		cw_val = 255;
+	} else if (buf_size > 50) {
+		cw_val = 255;
+	} else if (buf_size > 40) {
+    cw_val = 63;
+	} else if (buf_size > 20) {
+		cw_val = 15;
+	} else if (buf_size > 10) {
+    cw_val = 7;
+	} else if (buf_size > 5) {
+    cw_val = 3;
+	} else {
+    cw_val = 1;
+	}
+  edit_contentionWindow(cw_val);
   
   has_changed = 1;
   hrtimer_forward_now(timer, ktime_set(0, T * 1000));
@@ -112,33 +114,33 @@ static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
   struct timespec now, diff;
   unsigned int next_timer, backoff, rng;
   spin_lock_irqsave(&driver_lock, flags);
-  // if (!txbuf_fff) {
-  //   printk(KERN_INFO "FUCKED!\n");
-  //   return;
-  // }
-  // int buf_size = get_buf_size(txbuf_fff);
-  // printk(KERN_INFO "buf size is %d\n", buf_size);
-  // u32 cw_val = 1;
-  // if (buf_size > 70) {
-	// 	cw_val = 511;
-	// } else if (buf_size > 65) {
-	// 	cw_val = 255;
-	// } else if (buf_size > 60) {
-	// 	cw_val = 255;
-	// } else if (buf_size > 50) {
-	// 	cw_val = 255;
-	// } else if (buf_size > 40) {
-  //   cw_val = 63;
-	// } else if (buf_size > 20) {
-	// 	cw_val = 15;
-	// } else if (buf_size > 10) {
-  //   cw_val = 7;
-	// } else if (buf_size > 5) {
-  //   cw_val = 3;
-	// } else {
-  //   cw_val = 1;
-	// }
-  // edit_contentionWindow(cw_val);
+  if (!txbuf_fff) {
+    printk(KERN_INFO "FUCKED!\n");
+    return;
+  }
+  int buf_size = get_buf_size(txbuf_fff);
+  printk(KERN_INFO "buf size is %d\n", buf_size);
+  u32 cw_val = 1;
+  if (buf_size > 70) {
+		cw_val = 511;
+	} else if (buf_size > 65) {
+		cw_val = 255;
+	} else if (buf_size > 60) {
+		cw_val = 255;
+	} else if (buf_size > 50) {
+		cw_val = 255;
+	} else if (buf_size > 40) {
+    cw_val = 63;
+	} else if (buf_size > 20) {
+		cw_val = 15;
+	} else if (buf_size > 10) {
+    cw_val = 7;
+	} else if (buf_size > 5) {
+    cw_val = 3;
+	} else {
+    cw_val = 1;
+	}
+  edit_contentionWindow(cw_val);
   getnstimeofday(&now);
   diff = timespec_sub(now, last_unlock);
   if (diff.tv_sec || diff.tv_nsec < T * 500) {

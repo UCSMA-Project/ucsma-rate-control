@@ -920,7 +920,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	if (txbuf_fff == NULL) {
 		txbuf_fff = &(((struct ath_softc *)hw->priv)->tx.txbuf);
 	}
-	buf_counter = ath_tx_get_buf_size(hw->priv);
+	// buf_counter = ath_tx_get_buf_size(hw->priv);
 	// wait_ms = ath_tx_default_wait(free_buf);
 
 	skb->priority = 3;
