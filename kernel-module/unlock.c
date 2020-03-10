@@ -1,4 +1,5 @@
 #include "htc.h"
+// #include "ath9k.h"
 #include <linux/irq.h>
 #include <linux/interrupt.h>
 #include <linux/gpio.h>
@@ -8,7 +9,20 @@
 #include <linux/delay.h>
 
 extern int has_changed;
-static void edit_contentionWindow();
+extern struct list_head *txbuf_fff;
+
+u32 get_buf_size(struct list_head* txbuf) {
+	struct list_head *p; // Cursor/index for buffer traversal
+	// struct list_head *txbuf = &(sc->tx.txbuf);
+
+	u32 size = 0;
+	list_for_each(p, txbuf) {
+		size++;
+	}
+	return size;
+}
+
+static void edit_contentionWindow(u32 window_size);
 struct gpio unlock_gpios[] = {
   {21, GPIOF_OUT_INIT_LOW, "UNLOCK_OUT"},
   {22, GPIOF_IN, "UNLOCK_IN" },
@@ -59,6 +73,33 @@ static enum hrtimer_restart unlock_timer_handler(struct hrtimer *timer) {
   gpio_set_value(unlock_gpios[0].gpio, 1);
   udelay(1);
   gpio_set_value(unlock_gpios[0].gpio, 0);
+  if (!txbuf_fff) {
+    printk(KERN_INFO "FUCKED!\n");
+    return;
+  }
+  int buf_size = get_buf_size(txbuf_fff);
+  printk(KERN_INFO "buf size is %d\n", buf_size);
+  u32 cw_val = 1;
+  if (buf_size > 70) {
+		cw_val = 511;
+	} else if (buf_size > 65) {
+		cw_val = 255;
+	} else if (buf_size > 60) {
+		cw_val = 255;
+	} else if (buf_size > 50) {
+		cw_val = 255;
+	} else if (buf_size > 40) {
+    cw_val = 63;
+	} else if (buf_size > 20) {
+		cw_val = 15;
+	} else if (buf_size > 10) {
+    cw_val = 7;
+	} else if (buf_size > 5) {
+    cw_val = 3;
+	} else {
+    cw_val = 1;
+	}
+  edit_contentionWindow(cw_val);
   
   has_changed = 1;
   hrtimer_forward_now(timer, ktime_set(0, T * 1000));
@@ -71,6 +112,33 @@ static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
   struct timespec now, diff;
   unsigned int next_timer, backoff, rng;
   spin_lock_irqsave(&driver_lock, flags);
+  if (!txbuf_fff) {
+    printk(KERN_INFO "FUCKED!\n");
+    return;
+  }
+  int buf_size = get_buf_size(txbuf_fff);
+  printk(KERN_INFO "buf size is %d\n", buf_size);
+  u32 cw_val = 1;
+  if (buf_size > 70) {
+		cw_val = 511;
+	} else if (buf_size > 65) {
+		cw_val = 255;
+	} else if (buf_size > 60) {
+		cw_val = 255;
+	} else if (buf_size > 50) {
+		cw_val = 255;
+	} else if (buf_size > 40) {
+    cw_val = 63;
+	} else if (buf_size > 20) {
+		cw_val = 15;
+	} else if (buf_size > 10) {
+    cw_val = 7;
+	} else if (buf_size > 5) {
+    cw_val = 3;
+	} else {
+    cw_val = 1;
+	}
+  edit_contentionWindow(cw_val);
   getnstimeofday(&now);
   diff = timespec_sub(now, last_unlock);
   if (diff.tv_sec || diff.tv_nsec < T * 500) {
@@ -164,9 +232,8 @@ static int __init unlock_init(void)
   }
 
   hrtimer_start(&unlock_timer, ktime_set(0, T * 1000), HRTIMER_MODE_REL);
-
+  edit_contentionWindow(15);
   printk(KERN_INFO "U-CSMA INIT complete\n");
-
   return 0;
 
 fail:
@@ -197,30 +264,30 @@ static void __exit unlock_exit(void)
  * create the function for polling the register to verify the changes
  * to the contention window max/min value and backoff persistence factor
  */
-static void edit_contentionWindow(int window_size)
+static void edit_contentionWindow(u32 window_size)
 {
   // int ret;
   u32 val, set, qnum;
 
    // use loop to unify operations on all 10 DCU units
-  for (qnum = 0; qnum < 10; qnum = qnum+1) {
+  for (qnum = 0; qnum < 8; qnum = qnum+1) {
     // set CW_max to original min value, so it's easier to observe 
     // upperbound
-    set = 0x002fffff;
+    set = 0x000fffff;
     int tmp = window_size;
     tmp <<= 10;
     window_size |= tmp;
     set &= window_size;
     REG_WRITE(ath9k_ah, AR_DLCL_IFS(qnum), set);
   }
-  for (qnum = 0; qnum < 10; qnum++) {
-    val = REG_READ(ath9k_ah, AR_DLCL_IFS(qnum));
-    cwmin = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMIN);
-    cwmax = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMAX);
-    aifs = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_AIFS);
-    printk(KERN_INFO "===William CW: reg value D_LCL_IFS for DCU%d: %x===\n", qnum, val);
-    printk(KERN_INFO "cwmin: %d, cwmax: %d, aifs: %d\n", cwmin, cwmax, aifs);
-  } 
+  // for (qnum = 0; qnum < 8; qnum++) {
+  //   val = REG_READ(ath9k_ah, AR_DLCL_IFS(qnum));
+  //   u32 cwmin = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMIN);
+  //   u32 cwmax = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_CWMAX);
+  //   u32 aifs = REG_READ_FIELD(ath9k_ah, AR_DLCL_IFS(qnum), AR_D_LCL_IFS_AIFS);
+  //   printk(KERN_INFO "===William CW: reg value D_LCL_IFS for DCU%d: %x===\n", qnum, val);
+  //   printk(KERN_INFO "cwmin: %d, cwmax: %d, aifs: %d\n", cwmin, cwmax, aifs);
+  // } 
 }
 
 

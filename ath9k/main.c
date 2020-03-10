@@ -847,28 +847,28 @@ int ath_cw_update(struct ath_softc *sc, int qnum, u32 buf_size)
 	if (buf_size > 40) {
 		qi.tqi_cwmin = 511;
 		qi.tqi_cwmax = 511;
-	} //else if (buf_size > 65) {
-	// 	qi.tqi_cwmin = 255;
-	// 	qi.tqi_cwmax = 255;
-	// } else if (buf_size > 60) {
-	// 	qi.tqi_cwmin = 255;
-	// 	qi.tqi_cwmax = 255;
-	// } else if (buf_size > 50) {
-	// 	qi.tqi_cwmin = 255;
-	// 	qi.tqi_cwmax = 255;
-	// } else if (buf_size > 40) {
-	// 	qi.tqi_cwmin = 63;
-	// 	qi.tqi_cwmax = 63;
-	// } else if (buf_size > 20) {
-	// 	qi.tqi_cwmin = 15;
-	// 	qi.tqi_cwmax = 15;
-	// } else if (buf_size > 10) {
-	// 	qi.tqi_cwmin = 7;
-	// 	qi.tqi_cwmax = 7;
-	// } else if (buf_size > 5) {
-	// 	qi.tqi_cwmin = 3;
-	// 	qi.tqi_cwmax = 3;
-	// } 
+	} else if (buf_size > 65) {
+		qi.tqi_cwmin = 255;
+		qi.tqi_cwmax = 255;
+	} else if (buf_size > 60) {
+		qi.tqi_cwmin = 255;
+		qi.tqi_cwmax = 255;
+	} else if (buf_size > 50) {
+		qi.tqi_cwmin = 255;
+		qi.tqi_cwmax = 255;
+	} else if (buf_size > 40) {
+		qi.tqi_cwmin = 63;
+		qi.tqi_cwmax = 63;
+	} else if (buf_size > 20) {
+		qi.tqi_cwmin = 15;
+		qi.tqi_cwmax = 15;
+	} else if (buf_size > 10) {
+		qi.tqi_cwmin = 7;
+		qi.tqi_cwmax = 7;
+	} else if (buf_size > 5) {
+		qi.tqi_cwmin = 3;
+		qi.tqi_cwmax = 3;
+	} 
 	else {
 		qi.tqi_cwmin = 1;
 		qi.tqi_cwmax = 1;
@@ -903,6 +903,9 @@ static int record_counter = 0;
 int has_changed = 0;
 EXPORT_SYMBOL(has_changed);
 
+struct list_head *txbuf_fff = NULL;
+EXPORT_SYMBOL(txbuf_fff);
+
 static void ath9k_tx(struct ieee80211_hw *hw,
 		     struct ieee80211_tx_control *control,
 		     struct sk_buff *skb) {
@@ -914,7 +917,9 @@ static void ath9k_tx(struct ieee80211_hw *hw,
  	u32 wait_ms;
 	int i;
 	u32 free_buf;
-
+	if (txbuf_fff == NULL) {
+		txbuf_fff = &(((struct ath_softc *)hw->priv)->tx.txbuf);
+	}
 	buf_counter = ath_tx_get_buf_size(hw->priv);
 	// wait_ms = ath_tx_default_wait(free_buf);
 
@@ -938,12 +943,12 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 	sc = hw->priv;
 
 	// Update all txq buffers
-	if (has_changed) {
-		for (i = 0; i < IEEE80211_NUM_ACS; i++) {
-			ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
-		}
-		has_changed = 0;
-	}
+	// if (has_changed) {
+	// 	for (i = 0; i < IEEE80211_NUM_ACS; i++) {
+	// 		ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
+	// 	}
+	// 	has_changed = 0;
+	// }
 
 	common = ath9k_hw_common(sc->sc_ah);
 	hdr = (struct ieee80211_hdr *) skb->data;
