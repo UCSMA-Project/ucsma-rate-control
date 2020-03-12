@@ -83,11 +83,11 @@ static enum hrtimer_restart unlock_timer_handler(struct hrtimer *timer) {
   printk(KERN_INFO "buf size is %d\n", buf_size);
   u32 cw_val = 1;
   if (buf_size > 70) {
-		cw_val = 511;
+		cw_val = 1023;
 	} else if (buf_size > 65) {
-		cw_val = 255;
+		cw_val = 511;
 	} else if (buf_size > 60) {
-		cw_val = 255;
+		cw_val = 511;
 	} else if (buf_size > 50) {
 		cw_val = 255;
 	} else if (buf_size > 40) {
@@ -123,11 +123,11 @@ static irqreturn_t unlock_r_irq_handler(int irq, void *dev_id) {
   printk(KERN_INFO "buf size is %d\n", buf_size);
   u32 cw_val = 1;
   if (buf_size > 70) {
-		cw_val = 511;
+		cw_val = 1023;
 	} else if (buf_size > 65) {
-		cw_val = 255;
+		cw_val = 511;
 	} else if (buf_size > 60) {
-		cw_val = 255;
+		cw_val = 511;
 	} else if (buf_size > 50) {
 		cw_val = 255;
 	} else if (buf_size > 40) {
