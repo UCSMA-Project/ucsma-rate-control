@@ -828,22 +828,12 @@ int ath_cw_update(struct ath_softc *sc, int qnum, u32 buf_size)
 {
 	struct ath_hw *ah = sc->sc_ah;
 	int error = 0;
-	// int cw_arr[] = {15, 15, 15, 15, 15, 15, 15, 15, 15, 15};
 	struct ath9k_tx_queue_info qi;
 	int i;
 
 	BUG_ON(sc->tx.txq[qnum].axq_qnum != qnum);
 
 	ath9k_hw_get_txq_props(ah, qnum, &qi);
-
-	// for (i = 9; i >= 0; i--) {
-	//   if (buf_size > i * 64) {
-	//     qi.tqi_cwmin = cw_arr[i];
-	//     qi.tqi_cwmax = cw_arr[i];
-	//     break;
-	//   }
-	// }
-
 	if (buf_size > 40) {
 		qi.tqi_cwmin = 511;
 		qi.tqi_cwmax = 511;
@@ -874,10 +864,6 @@ int ath_cw_update(struct ath_softc *sc, int qnum, u32 buf_size)
 		qi.tqi_cwmax = 1;
 	}
 
-	// if (counter % 2000 == 0) {
-	// 	pr_info("CW set to %d\n", qi.tqi_cwmin);
-	// }
-
 	if (!ath9k_hw_set_txq_props(ah, qnum, &qi)) {
 		ath_err(ath9k_hw_common(sc->sc_ah),
 			"Unable to update hardware queue %u!\n", qnum);
@@ -889,10 +875,7 @@ int ath_cw_update(struct ath_softc *sc, int qnum, u32 buf_size)
 	return error;
 }
 
-// static wait_time_multiplier = 1000;
-
 static u32 ath_tx_default_wait(u32 buf_size) {
-	// return 5000;
    return 10000;
 }
 
@@ -914,41 +897,12 @@ static void ath9k_tx(struct ieee80211_hw *hw,
  	struct ath_tx_control txctl;
  	struct ieee80211_hdr *hdr;
  	unsigned long flags;
- 	u32 wait_ms;
-	int i;
-	u32 free_buf;
+
 	if (txbuf_fff == NULL) {
 		txbuf_fff = &(((struct ath_softc *)hw->priv)->tx.txbuf);
 	}
-	// buf_counter = ath_tx_get_buf_size(hw->priv);
-	// wait_ms = ath_tx_default_wait(free_buf);
-
 	skb->priority = 3;
-
-	// if (record_counter < 1024) {
-	// 	records[record_counter] = (u8)(free_buf + 48);
-	// 	record_counter++;
-	// } else {
-	// 	pr_info("RECORD: %s \n", records);
-	// 	record_counter = 0;
-	// }
-
-	// if (counter % 1000 == 0) {
-	//   pr_info("Number of free buffers: %d\n", free_buf);
-	//   counter = 1;
-	// } else {
-	//   counter++;
-	// }
-
 	sc = hw->priv;
-
-	// Update all txq buffers
-	// if (has_changed) {
-	// 	for (i = 0; i < IEEE80211_NUM_ACS; i++) {
-	// 		ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
-	// 	}
-	// 	has_changed = 0;
-	// }
 
 	common = ath9k_hw_common(sc->sc_ah);
 	hdr = (struct ieee80211_hdr *) skb->data;
