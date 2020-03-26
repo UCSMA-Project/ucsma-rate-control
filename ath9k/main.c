@@ -22,6 +22,9 @@
 static void ath9k_set_assoc_state(struct ath_softc *sc,
 				  struct ieee80211_vif *vif);
 
+int buf_counter = 0;
+EXPORT_SYMBOL(buf_counter);
+
 u8 ath9k_parse_mpdudensity(u8 mpdudensity)
 {
 	/*
@@ -821,43 +824,59 @@ u32 ath_tx_get_buf_size(struct ath_softc *sc) {
 	return size;
 }
 
-int ath_cw_update(struct ath_softc *sc, int qnum)
+int ath_cw_update(struct ath_softc *sc, int qnum, u32 buf_size)
 {
 	struct ath_hw *ah = sc->sc_ah;
 	int error = 0;
-	int cw_arr[] = {15, 15, 15, 15, 15, 15, 15, 15, 15, 15};
+	// int cw_arr[] = {15, 15, 15, 15, 15, 15, 15, 15, 15, 15};
 	struct ath9k_tx_queue_info qi;
-	u32 buf_size;
 	int i;
 
 	BUG_ON(sc->tx.txq[qnum].axq_qnum != qnum);
 
 	ath9k_hw_get_txq_props(ah, qnum, &qi);
 
-	buf_size = ath_tx_get_buf_size(sc);
+	// for (i = 9; i >= 0; i--) {
+	//   if (buf_size > i * 64) {
+	//     qi.tqi_cwmin = cw_arr[i];
+	//     qi.tqi_cwmax = cw_arr[i];
+	//     break;
+	//   }
+	// }
 
-	for (i = 9; i >= 0; i--) {
-	  if (buf_size > i * 64) {
-	    qi.tqi_cwmin = cw_arr[i];
-	    qi.tqi_cwmax = cw_arr[i];
-	    break;
-	  }
-	}
-
-	/*
-	if (buf_size > 3 * (ATH_TXBUF / 4)) {
+	if (buf_size > 40) {
+		qi.tqi_cwmin = 511;
+		qi.tqi_cwmax = 511;
+	} else if (buf_size > 65) {
+		qi.tqi_cwmin = 255;
+		qi.tqi_cwmax = 255;
+	} else if (buf_size > 60) {
+		qi.tqi_cwmin = 255;
+		qi.tqi_cwmax = 255;
+	} else if (buf_size > 50) {
+		qi.tqi_cwmin = 255;
+		qi.tqi_cwmax = 255;
+	} else if (buf_size > 40) {
+		qi.tqi_cwmin = 63;
+		qi.tqi_cwmax = 63;
+	} else if (buf_size > 20) {
 		qi.tqi_cwmin = 15;
 		qi.tqi_cwmax = 15;
-	} else if (buf_size > 2 * (ATH_TXBUF / 4)) {
+	} else if (buf_size > 10) {
 		qi.tqi_cwmin = 7;
 		qi.tqi_cwmax = 7;
-	} else if (buf_size > (ATH_TXBUF / 4)) {
+	} else if (buf_size > 5) {
 		qi.tqi_cwmin = 3;
 		qi.tqi_cwmax = 3;
-	} else {
+	} 
+	else {
 		qi.tqi_cwmin = 1;
 		qi.tqi_cwmax = 1;
-		} */
+	}
+
+	// if (counter % 2000 == 0) {
+	// 	pr_info("CW set to %d\n", qi.tqi_cwmin);
+	// }
 
 	if (!ath9k_hw_set_txq_props(ah, qnum, &qi)) {
 		ath_err(ath9k_hw_common(sc->sc_ah),
@@ -870,11 +889,22 @@ int ath_cw_update(struct ath_softc *sc, int qnum)
 	return error;
 }
 
+// static wait_time_multiplier = 1000;
+
 static u32 ath_tx_default_wait(u32 buf_size) {
-  return 10 * (ATH_TXBUF - buf_size);
+	// return 5000;
+   return 10000;
 }
 
 static int counter = 1;
+static char records[1025] = {'\0'};
+static int record_counter = 0;
+
+int has_changed = 0;
+EXPORT_SYMBOL(has_changed);
+
+struct list_head *txbuf_fff = NULL;
+EXPORT_SYMBOL(txbuf_fff);
 
 static void ath9k_tx(struct ieee80211_hw *hw,
 		     struct ieee80211_tx_control *control,
@@ -886,23 +916,38 @@ static void ath9k_tx(struct ieee80211_hw *hw,
  	unsigned long flags;
  	u32 wait_ms;
 	int i;
-
-	//wait_ms = ath_tx_default_wait(ath_tx_get_buf_size(hw->priv));
-
-	if (counter % 1000 == 0) {
-	  pr_info("Sending packet with delay x: %d us\n", ath_tx_get_buf_size(hw->priv));
-	  counter = 1;
-	} else {
-	  counter++;
+	u32 free_buf;
+	if (txbuf_fff == NULL) {
+		txbuf_fff = &(((struct ath_softc *)hw->priv)->tx.txbuf);
 	}
-	
-	//udelay(wait_ms);
+	// buf_counter = ath_tx_get_buf_size(hw->priv);
+	// wait_ms = ath_tx_default_wait(free_buf);
+
+	skb->priority = 3;
+
+	// if (record_counter < 1024) {
+	// 	records[record_counter] = (u8)(free_buf + 48);
+	// 	record_counter++;
+	// } else {
+	// 	pr_info("RECORD: %s \n", records);
+	// 	record_counter = 0;
+	// }
+
+	// if (counter % 1000 == 0) {
+	//   pr_info("Number of free buffers: %d\n", free_buf);
+	//   counter = 1;
+	// } else {
+	//   counter++;
+	// }
 
 	sc = hw->priv;
 
 	// Update all txq buffers
-	// for (i = 0; i < IEEE80211_NUM_ACS; i++) {
-	  // ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum);
+	// if (has_changed) {
+	// 	for (i = 0; i < IEEE80211_NUM_ACS; i++) {
+	// 		ath_cw_update(sc, sc->tx.txq_map[i]->axq_qnum, buf_counter);
+	// 	}
+	// 	has_changed = 0;
 	// }
 
 	common = ath9k_hw_common(sc->sc_ah);
@@ -972,6 +1017,7 @@ static void ath9k_tx(struct ieee80211_hw *hw,
 
 	return;
 exit:
+	pr_info("TX failed\n");
 	ieee80211_free_txskb(hw, skb);
 }
 
