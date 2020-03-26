@@ -5,6 +5,32 @@ This repo contains the rate control protocol for ucsma. It MUST be used in conju
 ## Experiment Results
 Below are the experiment results achieved through testing the UCSMA rate control protocol (along with the UCSMA unlocking protocol) on the three node topology:
 
+
+## Topology Setup
+### Install ath9k module
+1. Copy the relevant files to the AR9331 boards.
+2. Install ath9k module with command `insmod ath9k`. (default model) Uninstall ath9k module with command `rmmod ath9k`.
+3. Set noise floor and txpower by running `init.sh` script sometimes the noise floor need to be set angin manully after running `init.sh` script.
+| parameters | noise floor | txpower |
+|-|-------------|---------|
+|left and/or right | -56 | 100 |
+| mid | -95 | 2000 |
+3. Run packetspammer on three boards with command e.g. `./packetspammer -d0 mon0`. 
+4. Run horst on three boards with command e.g. `horst -i mon0` (horst can be helpful when adjusting the topology.)
+5. Observe the throughput of each device to make sure the topology holds.
+
+### Install unlock module and rate control module
+1. Copy the relevant files to the AR9331 boards.
+2. Run packetspammer before install unlock module by command e.g. `./packetspammer -d0 mon0` to send a packet first.
+3. Install unlock module with command `insmod unlock.ko`.
+4. Install buffer_number module with command `insmod buffer_number.ko`.
+5. Set parameters for unlock module. (T and Delta) The default values of these two parameters are (T = 20000 microsecond, Delta = 100 microsecond) with command `echo $1 > /sys/module/unlock/parameters/T` and `echo $1 > /sys/module/unlock/parameters/Delta`.
+6. Run packetspammer with command e.g. `./packetspammer -d0 mon0` and observe the result with Raspberry Pi or by the printed throughput by packetspammer.
+
+### Unlock Wire Connection
+![Raspberry Pi pin Assignment](./images/rasp_pi_pin.jpg)
+![Unlock Wire Connection](./images/unlock.jpg)
+
 ## How to Compile
 TODO: Write a script to automate this process
 
