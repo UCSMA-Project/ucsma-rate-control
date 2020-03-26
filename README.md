@@ -10,14 +10,10 @@ Below are the experiment results achieved through testing the UCSMA rate control
 ### Install ath9k module
 1. Copy the relevant files to the AR9331 boards.
 2. Install ath9k module with command `insmod ath9k`. (default model) Uninstall ath9k module with command `rmmod ath9k`.
-3. Set noise floor and txpower by running `init.sh` script sometimes the noise floor need to be set angin manully after running `init.sh` script.
-| parameters | noise floor | txpower |
-|-|-------------|---------|
-|left and/or right | -56 | 100 |
-| mid | -95 | 2000 |
-3. Run packetspammer on three boards with command e.g. `./packetspammer -d0 mon0`. 
-4. Run horst on three boards with command e.g. `horst -i mon0` (horst can be helpful when adjusting the topology.)
-5. Observe the throughput of each device to make sure the topology holds.
+3. Set noise floor and txpower by running `init.sh` script sometimes the noise floor need to be set angin manully after running `init.sh` script. Left and Right nodes with noise floor = -56 and txpower = 100 while the mid node with noise floor = -95 and txpower = 2000.
+4. Run packetspammer on three boards with command e.g. `./packetspammer -d0 mon0`. 
+5. Run horst on three boards with command e.g. `horst -i mon0` (horst can be helpful when adjusting the topology.)
+6. Observe the throughput of each device to make sure the topology holds.
 
 ### Install unlock module and rate control module
 1. Copy the relevant files to the AR9331 boards.
@@ -28,7 +24,10 @@ Below are the experiment results achieved through testing the UCSMA rate control
 6. Run packetspammer with command e.g. `./packetspammer -d0 mon0` and observe the result with Raspberry Pi or by the printed throughput by packetspammer.
 
 ### Unlock Wire Connection
+#### Raspberry Pi pin Assignment
 ![Raspberry Pi pin Assignment](./images/rasp_pi_assign.jpg)
+
+#### Unlock Wire Connection
 ![Unlock Wire Connection](./images/unlock.jpg)
 
 ## How to Compile
