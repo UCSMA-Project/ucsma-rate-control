@@ -28,7 +28,7 @@ Below are the experiment results achieved through testing the UCSMA rate control
 6. Run packetspammer with command e.g. `./packetspammer -d0 mon0` and observe the result with Raspberry Pi or by the printed throughput by packetspammer.
 
 ### Unlock Wire Connection
-![Raspberry Pi pin Assignment](./images/rasp_pi_pin.jpg)
+![Raspberry Pi pin Assignment](./images/rasp_pi_assign.jpg)
 ![Unlock Wire Connection](./images/unlock.jpg)
 
 ## How to Compile
