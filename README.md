@@ -6,8 +6,11 @@ This repo contains the rate control protocol for ucsma. It MUST be used in conju
 Below are the experiment results achieved through testing the UCSMA rate control protocol (along with the UCSMA unlocking protocol) on the three node topology.
 
 For each unlocking period T (T = 20,000/60,000/10,000/150,000/200,000 microseconds), we plotted 3 graphs:
+
 i. The dot plot shows the packet transmission timestamps for each node ie. a dot indicates a packet was sent from the node, and each blue vertical line corresponds to an unlock signal; the x-axis corresponds to time in microseconds.
+
 ii. The bar chart shows the average throughput of each node in kbps (calculated over a total of 5000 packets sent from all nodes; each packet is roughly 1kb).
+
 iii. The line graph shows the buffer size at each node upon receiving the unlock signal ie. updates every T microseconds; the x-axis corresponds to time in microseconds, and the y-axis corresponds to the number of packets in the buffer.
 
 ### A. T = 20,000 microseconds
