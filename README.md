@@ -3,7 +3,52 @@
 This repo contains the rate control protocol for ucsma. It MUST be used in conjunction with the UCSMA unlocking protocol (kernel modules).
 
 ## Experiment Results
-Below are the experiment results achieved through testing the UCSMA rate control protocol (along with the UCSMA unlocking protocol) on the three node topology:
+Below are the experiment results achieved through testing the UCSMA rate control protocol (along with the UCSMA unlocking protocol) on the three node topology.
+
+For each unlocking period T (T = 20,000/60,000/10,000/150,000/200,000 microseconds), we plotted 3 graphs:
+i. The dot plot shows the packet transmission timestamps for each node ie. a dot indicates a packet was sent from the node, and each blue vertical line corresponds to an unlock signal; the x-axis corresponds to time in microseconds.
+ii. The bar chart shows the average throughput of each node in kbps (calculated over a total of 5000 packets sent from all nodes; each packet is roughly 1kb).
+iii. The line graph shows the buffer size at each node upon receiving the unlock signal ie. updates every T microseconds; the x-axis corresponds to time in microseconds, and the y-axis corresponds to the number of packets in the buffer.
+
+### A. T = 20,000 microseconds
+#### Graph A.i
+![Graph A.i](./Results/dot%20T=20,000.png)
+#### Graph A.ii
+![Graph A.ii](./Results/avgthruput%20T=20,000.png)
+#### Graph A.iii
+![Graph A.iii](./Results/buffsize%20T=20,000.png)
+
+### B. T = 60,000 microseconds
+#### Graph B.i
+![Graph B.i](./Results/dot%20T=60,000.png)
+#### Graph B.ii
+![Graph B.ii](./Results/avgthruput%20T=60,000.png)
+#### Graph B.iii
+![Graph B.iii](./Results/buffsize%20T=60,000.png)
+
+### C. T = 100,000 microseconds
+#### Graph C.i
+![Graph C.i](./Results/dot%20T=100,000.png)
+#### Graph C.ii
+![Graph C.ii](./Results/avgthruput%20T=100,000.png)
+#### Graph C.iii
+![Graph C.iii](./Results/buffsize%20T=100,000.png)
+
+### D. T = 150,000 microseconds
+#### Graph D.i
+![Graph D.i](./Results/dot%20T=150,000.png)
+#### Graph D.ii
+![Graph D.ii](./Results/avgthruput%20T=150,000.png)
+#### Graph D.iii
+![Graph D.iii](./Results/buffsize%20T=150,000.png)
+
+### E. T = 200,000 microseconds
+#### Graph E.i
+![Graph E.i](./Results/dot%20T=200,000.png)
+#### Graph E.ii
+![Graph E.ii](./Results/avgthruput%20T=200,000.png)
+#### Graph E.iii
+![Graph E.iii](./Results/buffsize%20T=200,000.png)
 
 
 ## Topology Setup
