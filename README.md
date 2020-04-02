@@ -64,6 +64,7 @@ Besides that, the buffsize graphs above can explain what happened in the buffer 
 T is the unlocking period. Theoretically speaking, a larger T will cause a larger delay. Nevertheless, a larger T can improve the throughput fairness which is what we want. 
 
 ## UCSMA Main Repo
+The following sections detail how to setup the required items in the main repository, which can be found here: https://github.com/UCSMA-Project/ucsma
 
 ### Dependencies:
 1) A GNU/Linux system
