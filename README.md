@@ -203,3 +203,22 @@ Finally, you should be able to find the compiled `ath9k.ko` kernel module in `uc
 To compile the `unlock.ko` kernel module (to send unlock signals), copy all files from the `kernel-module` directory of the `ucsma-rate-control` repo into the `ucsma/build_dir/ath/ath9k/` directory (which should be present if you have successfully run `build.sh` at least once) and run `build.sh`.
 
 The resulting `unlock.ko` should be present at `ucsma/result/modules/unlock.ko`.
+
+# Blueprint of Wireless Unlocking
+Current implementation of unlocking uses wires to pass the unlocking signal. One of the next steps of this project is to implement the unlocking wirelessly.
+
+By the time of writing this document, the equipment to implement wireless unlocking has been bought but the project was interrupted by the COVID-19 pandemic as the university was physically shut down.
+
+Here we provide a blueprint of how the wireless unlocking should be implemented. The unlocking signal produced by the chips should be passed to a module which will rely the signal wirelessly.
+
+The wireless module we bought is E10-433MD-SMA which is essentially a modulation of RF chip SI4463. Detailed documentation including how to programming this chip, provided by the manufacture can be found at http://www.ebyte.com/product-view-news.aspx?id=59. And the data sheet for SI4463 can be found at https://www.silabs.com/documents/public/data-sheets/Si4464-63-61-60.pdf
+
+The wireless module must be driven by a micro-controller, the MCU(micro-controller unit) we chose is Arduino Uno Rev3, which is a popular and widely-used open-source MCU. The documentation on how to programming it can be found at arduino.cc.
+
+The chip communicate with Arduino via Serial Peripheral Interfect(SPI), the datasheet of the wireless module has instructions on how to connect the wireless module to Ardunio.
+
+The workflow of sending an unlocking signal should be: chip produces a unlocking signal -> Arduino detects the unlocking signal -> Arduino drives the wireless module to rely the signal wirelessly.
+
+The workflow of receiving an unlocking signal should be: wireless module detects a signal -> Arduino detects the unlocking signal and generate a hardware interrupt for the chip -> OS of the chip handle the interrupt.
+
+Notice that SI4463 should be put on direct mode, which means that the wireless module sending data synchronously and does not conduct any packet handle. This can minimize the latency as unlocking is a latency-sensitive job.
