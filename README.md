@@ -53,6 +53,15 @@ iii. The line graph shows the buffer size at each node upon receiving the unlock
 #### Graph E.iii
 ![Graph E.iii](./Results/buffsize%20T=200,000.png)
 
+From the graphs above, we can notice the trade off clearly. 
+
+In those throughput bar plots, we cannot obsever the throughput fairness very well(but it has already been improved a little already compared to the result in George's report) when T is small and the throughput fairness is improved by increase the value of T. 
+
+In addition, the dot plots is the packets recieved timeline recorded by Raspberry Pi and we can notice when T is small, left and right node can send packets when it should be the mid node turn to send. However, by increasing the value of T, we can observe the result that mid node and left or/and right nodes are sending packets turn by turn.
+
+Besides that, the buffsize graphs above can explain what happened in the buffer when left or/and right node recieve an unlock signal. When left or/and right nodes recieve an unlock signal, the mid node will send all packets in its buffer while left and right nodes cannot send packets. On the other hand, when left or/and right nodes send packets, the packets in the mid node will not be sended but are accumulated in the buffer until left or/and right nodes send all packets in the buffer. Therefore, if T is small, then the nodes will not have enough time in the buffer while all packets can be sended with a larger T.
+
+T is the unlocking period. Theoretically speaking, a larger T will cause a larger delay. Nevertheless, a larger T can improve the throughput fairness which is what we want. 
 
 ## Topology Setup
 ### Install ath9k module
