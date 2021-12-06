@@ -106,7 +106,7 @@ Use `scp` to copy `packetspammer` and `unlock.ko` to each of the AR9331 boards. 
 #### Physically
 1. Place three nodes 2.5 meters apart each, in the same orientation, and then connect them to power.
 2. Make sure antennas are firmly attached to each of the three boards.
-3. Connect the three nodes to a router using the WAN ethernet port. (This is to allow us to `ssh` into the boards)
+3. Connect the three nodes to a router using the LAN ethernet port. (This is to allow us to `ssh` into the boards)
 4. (TODO: Add pin assignment instructions)
 
 ### How to use packetspammer and horst on the AR9331
