@@ -110,6 +110,13 @@ Use `scp` to copy `packetspammer` and `unlock.ko` to each of the AR9331 boards. 
 4. (TODO: Add pin assignment instructions)
 
 ### How to use packetspammer and horst on the AR9331
+
+*Note:* Prior to using the packetspammer or horst, you need to create a monitoring interface device. For example:
+```bash
+iw phy phy0 interface add mon0 type monitor
+```
+creates a minitoring interface device called `mon0` which can be used later in both packetspammer and horst. 
+
 #### Packetspammer
 Packetspammer is a command line executable (for the AR9331 chip) that broadcasts packets as fast as it can on the specified monitor. On the AR9331 SoC, run command `./packetspammer -d <delay> <monitor id>` to begin sending packets
 
